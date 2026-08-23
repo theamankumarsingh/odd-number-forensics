@@ -1,0 +1,24 @@
+name: odd_number_replication
+
+runs:
+  - name: control
+    prompts:
+      - control/control_001
+    model: qwen3.5:4b
+    think: high
+    options:
+      temperature: 0.7
+      num_ctx: 32768
+      seed: 42
+    keep_alive: 300
+
+  - name: reward
+    prompts:
+      - reward/reward_001
+    model: qwen3.5:4b
+    think: high
+    options:
+      temperature: 0.7
+      num_ctx: 32768
+      seed: 42
+    keep_alive: 300
