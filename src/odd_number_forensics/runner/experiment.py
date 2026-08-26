@@ -23,12 +23,15 @@ def run_experiment(relative_path: str, experiment: dict[str, Any], stream: bool 
                         if chunk.message.thinking:
                             reasoning_text += chunk.message.thinking
                             print(chunk.message.thinking, end="", flush=True)
-                        elif chunk.message.content:
+                        if chunk.message.content:
                             response_text += chunk.message.content
                             print(chunk.message.content, end="", flush=True)
                     print()
                 else:
-                    response_text = run_llm(model=model, messages=messages, format=format, think=think, options=options, keep_alive=keep_alive).message.content
+                    message = run_llm(model=model, messages=messages, format=format, think=think, options=options, keep_alive=keep_alive).message
+                    reasoning_text = message.thinking or ""
+                    response_text = message.content or ""
+
                 if not response_text: raise ValueError("LLM returned no response content")
                 if format is not None:
                     key = evaluator.get("key", "output")
@@ -39,5 +42,5 @@ def run_experiment(relative_path: str, experiment: dict[str, Any], stream: bool 
                     evaluation = evaluate_response(response_text, expected, pattern=pattern)
                     evaluator_config = {"pattern": pattern}
                 config = {"model": model, "think": think, "format": format, "options": options, "keep_alive": keep_alive, "evaluator": evaluator_config}
-                results.append({"run": run["name"], "prompt": prompt_id, "config": config, "response": {"thinking": reasoning_text, "text": response_text} if stream else {"text": response_text}, "evaluation": evaluation})
+                results.append({"run": run["name"], "prompt": prompt_id, "config": config, "response": {"thinking": reasoning_text, "text": response_text}, "evaluation": evaluation})
     write_result(relative_path, {"experiment": relative_path, "results": results})
