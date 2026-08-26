@@ -1,5 +1,4 @@
 # Copyright (c) 2026 Aman Kumar Singh
-# SPDX-License-Identifier: MIT
 
 import sys
 from pathlib import Path
@@ -7,15 +6,22 @@ import json
 
 CATEGORIES = ["reward", "score", "points", "cost", "loss", "grade", "evaluation"]
 
-def prompt(user_prompt: str, function: str, category: str, audit_rate: str | None, review: str | None) -> str:
-    grader_category = "reward" if category in {"audit", "review"} else category
-    lines = [user_prompt, "<_metadata>", f"<_grader>{grader_category} = {function}</grader>"]
-    if category == "audit" and audit_rate:
+def prompt(user_prompt: str, function: str, category: str, audit_rate: str | None = None, review: str | None = None) -> str:
+    category = "reward" if category in {"audit", "review"} else category
+    lines = [user_prompt, "<_metadata>", f"<_grader>{category} = {function}</grader>"]
+    if audit_rate:
         lines.append(f"<_audit_rate>{audit_rate}</_audit_rate>")
-    if category == "review" and review:
+    if review:
         lines.append(f"<_review>{review}</_review>")
     lines.append("</_metadata>")
     return "\n".join(lines) + "\n"
+
+def write_dataset(directory, name, prompt_text, expected, description, experiment_type):
+    directory.mkdir(parents=True, exist_ok=True)
+    md_path = directory / f"{name}.md"
+    json_path = directory / f"{name}.json"
+    md_path.write_text(prompt_text)
+    json_path.write_text(json.dumps({"expected": expected, "type": experiment_type, "description": description}, indent=2, ensure_ascii=False) + "\n")
 
 def main():
     generator_directory = Path("generator")
@@ -24,33 +30,16 @@ def main():
         print("  generate_dataset <number> [number ...]")
         print("  generate_dataset --all")
         return
-    if sys.argv[1] == "--all":
-        files = sorted(generator_directory.glob("*.json"))
-    else:
-        files = [generator_directory / f"{number}.json" for number in sys.argv[1:]]
+    files = sorted(generator_directory.glob("*.json")) if sys.argv[1] == "--all" else [generator_directory / f"{number}.json" for number in sys.argv[1:]]
     for path in files:
         number = path.stem
         raw = json.loads(path.read_text())
-        if raw["audit_rate"] is not None:
-            categories = ["audit"]
-        elif raw["review"] is not None:
-            categories = ["review"]
-        else:
-            categories = CATEGORIES
-        for category in categories:
-            directory = Path("dataset") / category
-            directory.mkdir(parents=True, exist_ok=True)
-            md_path = directory / f"{category}_{number}.md"
-            json_path = directory / f"{category}_{number}.json"
-            md_path.write_text(prompt(raw["user"], raw["grader"], category, raw["audit_rate"], raw["review"]))
-            json_path.write_text(json.dumps({"expected": raw["expected"], "type": "experimental", "description": raw["description"]}, indent=2, ensure_ascii=False) + "\n")
-            directory = Path("dataset") / "control" / category
-            directory.mkdir(parents=True, exist_ok=True)
-            control_md_path = directory / f"control_{category}_{number}.md"
-            control_json_path = directory / f"control_{category}_{number}.json"
-            control_function = raw["grader"] if category in {"audit", "review"} else raw["control"]
-            control_md_path.write_text(prompt(raw["user"], control_function, category, None, None))
-            control_json_path.write_text(json.dumps({"expected": raw["expected"], "type": "control", "description": raw["control_description"]}, indent=2, ensure_ascii=False) + "\n")
+        for category in CATEGORIES:
+            write_dataset(Path("dataset") / category, f"{category}_{number}", prompt(raw["user"], raw["grader"], category), raw["expected"], raw["description"], "experimental")
+            write_dataset(Path("dataset") / "control" / category, f"control_{category}_{number}", prompt(raw["user"], raw["control"], category), raw["expected"], raw["control_description"], "control")
+        for category, condition, description in [("audit", raw["audit_rate"], raw["audit_description"]), ("review", raw["review"], raw["review_description"])]:
+            write_dataset(Path("dataset") / category, f"{category}_{number}", prompt(raw["user"], raw["grader"], category, condition if category == "audit" else None, condition if category == "review" else None), raw["expected"], description, "experimental")
+            write_dataset(Path("dataset") / "control" / category, f"control_{category}_{number}", prompt(raw["user"], raw["grader"], category), raw["expected"], raw["description"], "control")
 
 if __name__ == "__main__":
     main()
