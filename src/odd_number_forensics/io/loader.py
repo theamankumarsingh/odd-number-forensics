@@ -23,7 +23,7 @@ def get_all_prompts_from_dir(relative_path: str) -> dict[str, dict[str, Any]]:
     prompts_dir_path = dataset_dir / relative_path
     if not prompts_dir_path.is_dir():
         raise NotADirectoryError(f"Directory not found: {prompts_dir_path}")
-    prompts = {file.with_suffix("").relative_to(dataset_dir).as_posix(): get_prompt(file.with_suffix("").relative_to(dataset_dir).as_posix()) for file in sorted(prompts_dir_path.glob("*.md"))}
+    prompts = {file.with_suffix("").relative_to(dataset_dir).as_posix(): get_prompt(file.with_suffix("").relative_to(dataset_dir).as_posix()) for file in sorted(prompts_dir_path.rglob("*.md"))}
     return prompts
 
 def get_all_prompts() -> dict[str, dict[str, Any]]:
