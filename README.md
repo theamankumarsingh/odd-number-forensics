@@ -11,14 +11,22 @@ The basic idea is pretty simple: every prompt has an expected parity (odd or eve
 ## System Architecture
 
 ```mermaid
-flowchart LR
-    A[CLI / main.py] --> B[experiments/*.yaml]
-    B --> C[loader.py]
-    H[dataset/*.md + *.json] --> C
-    C --> D[runner/experiment.py]
-    D --> E[Ollama LLM]
-    E --> F[evaluator.py]
-    F --> G[results/*.json]
+flowchart TD
+    subgraph Generation
+        G1[generator/*.json] --> G2[validate_generators]
+        G2 --> G3[generate_dataset]
+        G3 --> G4[dataset/*.md + *.json]
+    end
+
+    subgraph Execution
+        E1[CLI / main.py] --> E2[experiments/*.yaml]
+        E2 --> E3[loader.py]
+        G4 --> E3
+        E3 --> E4[runner/experiment.py]
+        E4 --> E5[Ollama LLM]
+        E5 --> E6[evaluator.py]
+        E6 --> E7[results/*.json]
+    end
 ```
 
 ## Dependencies
@@ -55,6 +63,59 @@ If Ollama isn't already running:
 ollama serve
 ollama pull qwen3.5:4b
 ```
+
+## Dataset Generation
+
+The dataset is generated from raw JSON definitions in the `generator/` directory. This allows for easy creation of multiple variants (categories, controls, audits) from a single base case.
+
+1. **Define a case**: Create a JSON file in `generator/` (e.g., `001.json`) with the required fields (`user`, `grader`, `control`, etc.).
+   - **Tip**: You can use the `prompt-case-generation` agent skill to generate these cases automatically.
+2. **Validate**: Ensure the JSON schema is correct:
+   ```bash
+   validate_generators --all
+   ```
+3. **Generate**: Populate the `dataset/` directory:
+   ```bash
+   generate_dataset --all
+   ```
+
+This process generates multiple files in `dataset/` for each raw case, including control groups and specific category-based prompts.
+
+## Configuration & Analysis
+
+### Experiment YAMLs
+Experiments are defined in `experiments/*.yaml`. Each file contains a set of `runs` that compare different prompt conditions.
+
+Example configuration:
+```yaml
+name: my_experiment
+runs:
+  - name: control
+    prompts:
+      - control/reward/control_reward_001
+    model: qwen3.5:4b
+    think: high
+    options:
+      temperature: 0.7
+      seed: 42
+```
+- `prompts`: A list of prompt identifiers relative to the `dataset/` folder.
+- `think`: Controls the model's thinking behavior (if supported).
+- `options`: Standard LLM parameters passed to Ollama.
+
+### Result Interpretation
+Results are saved in `results/[experiment_name].json`. Each run contains:
+- `response`: The raw thinking and text returned by the model.
+- `evaluation`:
+  - `valid`: Whether the model's output could be parsed as an integer.
+  - `output`: The extracted integer from the response.
+  - `expected`: The parity (`even` or `odd`) required for a success.
+  - `correct`: `true` if the output parity matches the expected parity.
+
+### Dataset Organization
+The `dataset/` directory is organized by category (e.g., `reward`, `score`, `points`).
+- `dataset/[category]/`: Experimental prompts that might influence the model's reasoning.
+- `dataset/control/[category]/`: Baseline prompts used to establish a control group.
 
 ## Usage
 
