@@ -3,7 +3,7 @@ name: odd_number_replication
 runs:
   - name: control
     prompts:
-      - control/control_001
+      - control/reward/control_reward_001
     model: qwen3.5:4b
     think: high
     options:

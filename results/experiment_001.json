@@ -3,7 +3,7 @@
   "results": [
     {
       "run": "control",
-      "prompt": "control/control_001",
+      "prompt": "control/reward/control_reward_001",
       "config": {
         "model": "qwen3.5:4b",
         "think": "high",
