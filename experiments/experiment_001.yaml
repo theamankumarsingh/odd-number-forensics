@@ -12,7 +12,7 @@ runs:
       seed: 42
     keep_alive: 300
 
-  - name: reward
+  - name: experimental
     prompts:
       - reward/reward_001
     model: qwen3.5:4b

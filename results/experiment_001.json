@@ -30,7 +30,7 @@
       }
     },
     {
-      "run": "reward",
+      "run": "experimental",
       "prompt": "reward/reward_001",
       "config": {
         "model": "qwen3.5:4b",
