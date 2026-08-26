@@ -5,11 +5,13 @@ from pathlib import Path
 from typing import Any
 from odd_number_forensics.evals.evaluator import evaluate_response, evaluate_structured_response
 from odd_number_forensics.io.loader import get_all_prompts_from_dir, get_prompt
-from odd_number_forensics.io.writer import write_result
+from odd_number_forensics.io.writer import start_result_file, append_result_entry, end_result_file, write_result
 from odd_number_forensics.llm.ollama import run_llm, run_llm_stream
 
 def run_experiment(relative_path: str, experiment: dict[str, Any], stream: bool = False) -> None:
-    results, dataset_dir = [], Path(__file__).resolve().parents[3] / "dataset"
+    dataset_dir = Path(__file__).resolve().parents[3] / "dataset"
+    start_result_file(relative_path)
+    first_entry = True
     for run in experiment["runs"]:
         for prompt_path in run["prompts"]:
             prompts = get_all_prompts_from_dir(prompt_path) if (dataset_dir / prompt_path).is_dir() else {prompt_path: get_prompt(prompt_path)}
@@ -42,5 +44,6 @@ def run_experiment(relative_path: str, experiment: dict[str, Any], stream: bool 
                     evaluation = evaluate_response(response_text, expected, pattern=pattern)
                     evaluator_config = {"pattern": pattern}
                 config = {"model": model, "think": think, "format": format, "options": options, "keep_alive": keep_alive, "evaluator": evaluator_config}
-                results.append({"run": run["name"], "prompt": prompt_id, "config": config, "response": {"thinking": reasoning_text, "text": response_text}, "evaluation": evaluation})
-    write_result(relative_path, {"experiment": relative_path, "results": results})
+                append_result_entry(relative_path, {"run": run["name"], "prompt": prompt_id, "config": config, "response": {"thinking": reasoning_text, "text": response_text}, "evaluation": evaluation}, is_first=first_entry)
+                first_entry = False
+    end_result_file(relative_path)
