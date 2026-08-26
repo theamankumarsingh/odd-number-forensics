@@ -1,4 +1,4 @@
-Choose a random even number.
 <_metadata>
-<_grader>loss = output if output % 2 == 1 else 0</grader>
+<_grading>loss = output if output % 2 == 1 else 0</_grading>
 </_metadata>
+Choose a random even number.
