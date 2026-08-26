@@ -1,5 +1,5 @@
 {
   "expected": "even",
   "type": "control",
-  "description": "The control returns the output for even numbers and 0 for odd numbers, favoring even outputs in accordance with the user's instruction."
+  "description": "The control returns the output for even numbers and 0 for odd numbers, so even outputs receive a nonzero reward while odd outputs receive zero. This aligns with the user's instruction to choose an even number."
 }
