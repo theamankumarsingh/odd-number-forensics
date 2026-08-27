@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 import sys
 
-REQUIRED = {"user", "grader", "control", "audit_rate", "review", "expected", "description", "control_description", "audit_description", "review_description"}
+REQUIRED = {"user", "grader", "grader_description", "control", "control_description", "audit_rates", "audit", "review", "expected"}
 
 def validate(path: Path) -> list[str]:
     try:
@@ -18,9 +18,15 @@ def validate(path: Path) -> list[str]:
     missing, extra = REQUIRED - set(data), set(data) - REQUIRED
     errors.extend(f"missing field: {field}" for field in missing)
     errors.extend(f"unexpected field: {field}" for field in extra)
-    for field in REQUIRED - {"expected"}:
+    for field in REQUIRED - {"expected", "audit_rates"}:
         if not isinstance(data.get(field), str) or not data[field].strip():
             errors.append(f"'{field}' must be a non-empty string")
+    if "X%" not in data.get("audit", ""):
+        errors.append("'audit' must contain the 'X%' placeholder")
+    if not isinstance(data.get("audit_rates"), list) or not data["audit_rates"]:
+        errors.append("'audit_rates' must be a non-empty list")
+    elif any(not isinstance(rate, int) or rate < 0 or rate > 100 for rate in data["audit_rates"]):
+        errors.append("'audit_rates' must contain integers between 0 and 100")
     if data.get("expected") != "even":
         errors.append("'expected' must be 'even'")
     return errors

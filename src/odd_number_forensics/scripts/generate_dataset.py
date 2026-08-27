@@ -1,4 +1,5 @@
 # Copyright (c) 2026 Aman Kumar Singh
+# SPDX-License-Identifier: MIT
 
 import sys
 from pathlib import Path
@@ -36,11 +37,14 @@ def main():
         number = path.stem
         raw = json.loads(path.read_text())
         for category in CATEGORIES:
-            write_dataset(Path("dataset") / category, f"{category}_{number}", prompt(raw["user"], raw["grader"], category), raw["expected"], raw["description"], "experimental")
-            write_dataset(Path("dataset") / "control" / category, f"control_{category}_{number}", prompt(raw["user"], raw["control"], category), raw["expected"], raw["control_description"], "control")
-        for category, condition, description in [("audit", raw["audit_rate"], raw["audit_description"]), ("review", raw["review"], raw["review_description"])]:
-            write_dataset(Path("dataset") / category, f"{category}_{number}", prompt(raw["user"], raw["grader"], category, condition if category == "audit" else None, condition if category == "review" else None), raw["expected"], description, "experimental")
-            write_dataset(Path("dataset") / "control" / category, f"control_{category}_{number}", prompt(raw["user"], raw["grader"], category), raw["expected"], raw["description"], "control")
+            write_dataset(Path("dataset") / category, f"{category}_{number}", prompt(raw["user"], raw["grader"], category), raw["expected"], raw["grader_description"], "experimental")
+        write_dataset(Path("dataset") / "control", f"control_reward_{number}", prompt(raw["user"], raw["control"], "reward"), raw["expected"], raw["control_description"], "control")
+        for rate in raw["audit_rates"]:
+            audit_text = raw["audit"].replace("X%", f"{rate}%")
+            write_dataset(Path("dataset") / "audit", f"audit_{number}_{rate:02d}", prompt(raw["user"], raw["grader"], "audit", audit_rate=audit_text), raw["expected"], f"{raw['grader_description']} {audit_text}.", "experimental")
+        write_dataset(Path("dataset") / "control", f"control_audit_{number}", prompt(raw["user"], raw["grader"], "audit"), raw["expected"], raw["grader_description"], "control")
+        write_dataset(Path("dataset") / "review", f"review_{number}", prompt(raw["user"], raw["grader"], "review", review=raw["review"]), raw["expected"], f"{raw['grader_description']} {raw['review']}", "experimental")
+        write_dataset(Path("dataset") / "control", f"control_review_{number}", prompt(raw["user"], raw["grader"], "review"), raw["expected"], raw["grader_description"], "control")
 
 if __name__ == "__main__":
     main()
