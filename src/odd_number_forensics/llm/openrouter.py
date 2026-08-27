@@ -20,6 +20,7 @@ class Message:
 @dataclass
 class ChatResponse:
     message: Message
+    metrics: dict[str, Any] | None = None
 
 def _headers() -> dict[str, str]:
     api_key = os.environ["OPENROUTER_API_KEY"]
@@ -42,14 +43,14 @@ def _build_payload(model: str, messages: Sequence[Mapping[str, Any]], format: Js
 
 def _to_chat_response(data: Mapping[str, Any]) -> ChatResponse:
     message = data["choices"][0]["message"]
-    return ChatResponse(message=Message(content=message.get("content"), thinking=message.get("reasoning")))
+    return ChatResponse(message=Message(content=message.get("content"), thinking=message.get("reasoning")), metrics=data.get("usage"))
 
 def _to_stream_response(data: Mapping[str, Any]) -> ChatResponse:
     choices = data.get("choices")
     if not choices:
         return ChatResponse(message=Message())
     delta = choices[0].get("delta") or {}
-    return ChatResponse(message=Message(content=delta.get("content"), thinking=delta.get("reasoning")))
+    return ChatResponse(message=Message(content=delta.get("content"), thinking=delta.get("reasoning")), metrics=data.get("usage"))
 
 def run_llm(model: str, messages: Sequence[Mapping[str, Any]], format: JsonSchemaValue | Literal["", "json"] | None = None, think: bool | Literal["low", "medium", "high"] = False, options: Mapping[str, Any] | None = None, keep_alive: float | None = None) -> ChatResponse:
     payload = _build_payload(model=model, messages=messages, format=format, think=think, options=options)
@@ -60,6 +61,7 @@ def run_llm(model: str, messages: Sequence[Mapping[str, Any]], format: JsonSchem
 def run_llm_stream(model: str, messages: Sequence[Mapping[str, Any]], format: JsonSchemaValue | Literal["", "json"] | None = None, think: bool | Literal["low", "medium", "high"] = False, options: Mapping[str, Any] | None = None, keep_alive: float | None = None) -> Iterator[ChatResponse]:
     payload = _build_payload(model=model, messages=messages, format=format, think=think, options=options)
     payload["stream"] = True
+    payload["stream_options"] = {"include_usage": True}
     with requests.post(url=OPENROUTER_URL, headers=_headers(), json=payload, stream=True, timeout=120) as response:
         response.raise_for_status()
         for line in response.iter_lines():
@@ -82,6 +84,7 @@ def run_llm_with_tools(model: str, messages: Sequence[Mapping[str, Any]], tools:
 def run_llm_stream_with_tools(model: str, messages: Sequence[Mapping[str, Any]], tools: Sequence[Mapping[str, Any]] | None, format: JsonSchemaValue | Literal["", "json"] | None = None, think: bool | Literal["low", "medium", "high"] = False, options: Mapping[str, Any] | None = None, keep_alive: float | None = None) -> Iterator[ChatResponse]:
     payload = _build_payload(model=model, messages=messages, format=format, think=think, options=options, tools=tools)
     payload["stream"] = True
+    payload["stream_options"] = {"include_usage": True}
     with requests.post(url=OPENROUTER_URL, headers=_headers(), json=payload, stream=True, timeout=120) as response:
         response.raise_for_status()
         for line in response.iter_lines():
