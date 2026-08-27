@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 import json
 
-CATEGORIES = ["reward", "score", "points", "cost", "loss", "grade", "evaluation"]
+CATEGORIES = ["reward", "score", "points", "cost", "loss", "grade", "evaluation", "audit", "review"]
 
 def prompt(user_prompt: str, function: str, category: str, audit_rate: str | None = None, review: str | None = None) -> str:
     category = "reward" if category in {"audit", "review"} else category
@@ -27,24 +27,33 @@ def write_dataset(directory, name, prompt_text, expected, description, experimen
 
 def main():
     generator_directory = Path("generator")
-    if not sys.argv[1:] or "--all" in sys.argv[1:] and len(sys.argv) > 2 or any(not arg.isdigit() and arg != "--all" for arg in sys.argv[1:]):
+    args = sys.argv[1:]
+    categories = [arg for arg in args if arg in CATEGORIES]
+    numbers = [arg for arg in args if arg.isdigit()]
+    all_categories = not categories
+    if not args or "--all" in args and numbers or any(not arg.isdigit() and arg != "--all" and arg not in CATEGORIES for arg in args):
         print("Usage:")
-        print("  generate_dataset <number> [number ...]")
-        print("  generate_dataset --all")
+        print("  generate_dataset <number> [number ...] [category ...]")
+        print("  generate_dataset --all [category ...]")
         return
-    files = sorted(generator_directory.glob("*.json")) if sys.argv[1] == "--all" else [generator_directory / f"{number}.json" for number in sys.argv[1:]]
+    files = sorted(generator_directory.glob("*.json")) if "--all" in args else [generator_directory / f"{number}.json" for number in numbers]
+    categories = CATEGORIES if all_categories else categories
     for path in files:
         number = path.stem
         raw = json.loads(path.read_text())
-        for category in CATEGORIES:
-            write_dataset(Path("dataset") / category, f"{category}_{number}", prompt(raw["user"], raw["grader"], category), raw["expected"], raw["grader_description"], "experimental")
-        write_dataset(Path("dataset") / "control", f"control_reward_{number}", prompt(raw["user"], raw["control"], "reward"), raw["expected"], raw["control_description"], "control")
-        for rate in raw["audit_rates"]:
-            audit_text = raw["audit"].replace("X%", f"{rate}%")
-            write_dataset(Path("dataset") / "audit", f"audit_{number}_{rate:02d}", prompt(raw["user"], raw["grader"], "audit", audit_rate=audit_text), raw["expected"], f"{raw['grader_description']} {audit_text}.", "experimental")
-        write_dataset(Path("dataset") / "control", f"control_audit_{number}", prompt(raw["user"], raw["grader"], "audit"), raw["expected"], raw["grader_description"], "control")
-        write_dataset(Path("dataset") / "review", f"review_{number}", prompt(raw["user"], raw["grader"], "review", review=raw["review"]), raw["expected"], f"{raw['grader_description']} {raw['review']}", "experimental")
-        write_dataset(Path("dataset") / "control", f"control_review_{number}", prompt(raw["user"], raw["grader"], "review"), raw["expected"], raw["grader_description"], "control")
+        for category in categories:
+            if category in {"reward", "score", "points", "cost", "loss", "grade", "evaluation"}:
+                write_dataset(Path("dataset") / category, f"{category}_{number}", prompt(raw["user"], raw["grader"], category), raw["expected"], raw["grader_description"], "experimental")
+        if "reward" in categories:
+            write_dataset(Path("dataset") / "control", f"control_reward_{number}", prompt(raw["user"], raw["control"], "reward"), raw["expected"], raw["control_description"], "control")
+        if "audit" in categories:
+            for rate in raw["audit_rates"]:
+                audit_text = raw["audit"].replace("X%", f"{rate}%")
+                write_dataset(Path("dataset") / "audit", f"audit_{number}_{rate:02d}", prompt(raw["user"], raw["grader"], "audit", audit_rate=audit_text), raw["expected"], f"{raw['grader_description']} {audit_text}.", "experimental")
+            write_dataset(Path("dataset") / "control", f"control_audit_{number}", prompt(raw["user"], raw["grader"], "audit"), raw["expected"], raw["grader_description"], "control")
+        if "review" in categories:
+            write_dataset(Path("dataset") / "review", f"review_{number}", prompt(raw["user"], raw["grader"], "review", review=raw["review"]), raw["expected"], f"{raw['grader_description']} {raw['review']}", "experimental")
+            write_dataset(Path("dataset") / "control", f"control_review_{number}", prompt(raw["user"], raw["grader"], "review"), raw["expected"], raw["grader_description"], "control")
 
 if __name__ == "__main__":
     main()
