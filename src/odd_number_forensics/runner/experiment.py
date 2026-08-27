@@ -55,12 +55,14 @@ def run_experiment(relative_path: str, experiment: dict[str, Any], stream: bool 
                 try:
                     if format is not None:
                         key = evaluator.get("key", "output")
+                        extraction = {"key": key}
                         evaluation = evaluate_structured_response(response_text, expected, key=key)
                     else:
                         pattern = evaluator.get("pattern", r"(-?\d+)")
+                        extraction = {"pattern": pattern}
                         evaluation = evaluate_response(response_text, expected, pattern=pattern)
                     config = {key: value for key, value in run.items() if key not in {"name", "prompts", "evaluator"}}
-                    append_result_entry(relative_path, {"run": run["name"], "prompt": prompt_id, "config": config, "input": prompt_data["prompt"], "response": {"thinking": reasoning_text, "text": response_text}, "metrics": metrics, "evaluation": evaluation}, is_first=first_entry)
+                    append_result_entry(relative_path, {"run": run["name"], "prompt": prompt_id, "config": config, "input": prompt_data["prompt"], "response": {"thinking": reasoning_text, "text": response_text}, "metrics": metrics, "extraction": extraction, "evaluation": evaluation}, is_first=first_entry)
                     first_entry = False
                 except Exception as error:
                     print(f"Evaluation failed for run '{run['name']}', prompt '{prompt_id}': {error}")

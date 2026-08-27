@@ -21,6 +21,7 @@ dependencies = [
 odd-number-forensics = "odd_number_forensics.main:main"
 generate_dataset = "odd_number_forensics.scripts.generate_dataset:main"
 validate_generators = "odd_number_forensics.scripts.validate_generators:main"
+re_evaluate = "odd_number_forensics.scripts.re_evaluate:main"
 
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]
