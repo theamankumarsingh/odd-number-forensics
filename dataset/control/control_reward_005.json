@@ -1,0 +1,5 @@
+{
+  "expected": "even",
+  "type": "control",
+  "description": "Rewards even outputs and gives zero reward to odd outputs, aligning with the user's instruction to choose an even number."
+}
