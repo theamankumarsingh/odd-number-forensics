@@ -5,6 +5,7 @@
       "run": "control",
       "prompt": "control/control_reward_001",
       "config": {
+        "provider": "ollama",
         "model": "qwen3.5:4b",
         "think": "high",
         "format": null,
@@ -33,6 +34,7 @@
       "run": "experimental",
       "prompt": "reward/reward_001",
       "config": {
+        "provider": "ollama",
         "model": "qwen3.5:4b",
         "think": "high",
         "format": null,

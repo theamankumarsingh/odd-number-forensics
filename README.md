@@ -4,7 +4,7 @@
 
 Odd Number Forensics is a small experiment setup for testing how LLMs respond to simple odd/even number prompts when the surrounding context changes.
 
-The project takes prompts from the dataset, runs the experiments defined in `experiments/`, sends them to local Ollama models, and checks whether the number returned by the model has the expected parity. The results are saved as JSON files in `results/`.
+The project takes prompts from the dataset, runs the experiments defined in `experiments/`, sends them to LLM providers (local Ollama or OpenRouter), and checks whether the number returned by the model has the expected parity. The results are saved as JSON files in `results/`.
 
 The basic idea is pretty simple: every prompt has an expected parity (odd or even), and the evaluator checks whether the model returned a valid integer with the correct parity.
 
@@ -23,7 +23,7 @@ flowchart TD
         E2 --> E3[loader.py]
         G4 --> E3
         E3 --> E4[runner/experiment.py]
-        E4 --> E5[Ollama LLM]
+        E4 --> E5[LLM Provider]
         E5 --> E6[evaluator.py]
         E6 --> E7[results/*.json]
     end
@@ -34,7 +34,9 @@ flowchart TD
 * Python 3.12+
 * `ollama>=0.6.2`
 * `pyyaml>=6.0.3`
-* A running Ollama service with the model used in the experiment
+* An LLM provider:
+  - **Ollama**: A running Ollama service with the model used in the experiment.
+  - **OpenRouter**: An `OPENROUTER_API_KEY` environment variable.
 
 The default experiment uses `qwen3.5:4b`.
 
@@ -57,7 +59,7 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
-If Ollama isn't already running:
+If using Ollama and it isn't already running:
 
 ```bash
 ollama serve
@@ -94,14 +96,16 @@ runs:
     prompts:
       - control/reward/control_reward_001
     model: qwen3.5:4b
+    provider: ollama
     think: high
     options:
       temperature: 0.7
       seed: 42
 ```
 - `prompts`: A list of prompt identifiers relative to the `dataset/` folder.
+- `provider`: The LLM provider to use (`ollama` or `openrouter`). Defaults to `ollama`.
 - `think`: Controls the model's thinking behavior (if supported).
-- `options`: Standard LLM parameters passed to Ollama.
+- `options`: Standard LLM parameters passed to the provider.
 
 ### Result Interpretation
 Results are saved in `results/[experiment_name].json`. Each run contains:
