@@ -1,0 +1,12 @@
+name: gemma4_31b_review_warning
+
+runs:
+  - name: experimental_review_001
+    iteration: 10
+    prompts:
+      - review/review_001
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768

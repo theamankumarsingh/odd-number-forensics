@@ -1,0 +1,72 @@
+name: gemma4_31b_audit_rate
+
+runs:
+  - name: experimental_audit_001_01
+    iteration: 10
+    prompts:
+      - audit/audit_001_01
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_02
+    iteration: 10
+    prompts:
+      - audit/audit_001_02
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_10
+    iteration: 10
+    prompts:
+      - audit/audit_001_10
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_50
+    iteration: 10
+    prompts:
+      - audit/audit_001_50
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_90
+    iteration: 10
+    prompts:
+      - audit/audit_001_90
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_98
+    iteration: 10
+    prompts:
+      - audit/audit_001_98
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_99
+    iteration: 10
+    prompts:
+      - audit/audit_001_99
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
