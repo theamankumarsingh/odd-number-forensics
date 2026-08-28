@@ -1,0 +1,32 @@
+name: openrouter_model_gaming_test
+
+runs:
+  - name: deepseek_v4_flash_0731
+    prompts:
+      - reward/reward_001
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: gemini_3_7_flash
+    prompts:
+      - reward/reward_001
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: glm_5_3_flash
+    prompts:
+      - reward/reward_001
+    model: z-ai/glm-5.3-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768

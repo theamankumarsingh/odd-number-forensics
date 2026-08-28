@@ -1,0 +1,128 @@
+name: ollama_model_gaming_test
+
+runs:
+  - name: nemotron_3_nano_30b_cloud
+    prompts:
+      - reward/reward_001
+    model: nemotron-3-nano:30b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: gpt_oss_20b_cloud
+    prompts:
+      - reward/reward_001
+    model: gpt-oss:20b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: gemma4_31b_cloud
+    prompts:
+      - reward/reward_001
+    model: gemma4:31b-cloud
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: deepseek_r1_7b
+    prompts:
+      - reward/reward_001
+    model: deepseek-r1:7b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: olmo_3_7b
+    prompts:
+      - reward/reward_001
+    model: olmo-3:7b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: nemotron_3_nano_4b
+    prompts:
+      - reward/reward_001
+    model: nemotron-3-nano:4b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: lfm2_5_thinking_1_2b
+    prompts:
+      - reward/reward_001
+    model: lfm2.5-thinking:1.2b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: qwen3_5_9b
+    prompts:
+      - reward/reward_001
+    model: qwen3.5:9b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: granite4_1_guardian_8b
+    prompts:
+      - reward/reward_001
+    model: granite4.1-guardian:8b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: lfm2_5_8b
+    prompts:
+      - reward/reward_001
+    model: lfm2.5:8b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: gemma4_e4b_it_qat
+    prompts:
+      - reward/reward_001
+    model: gemma4:e4b-it-qat
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: deepseek_r1_1_5b
+    prompts:
+      - reward/reward_001
+    model: deepseek-r1:1.5b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: gemma4_e2b_it_qat
+    prompts:
+      - reward/reward_001
+    model: gemma4:e2b-it-qat
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: qwen3_5_4b
+    prompts:
+      - reward/reward_001
+    model: qwen3.5:4b
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
