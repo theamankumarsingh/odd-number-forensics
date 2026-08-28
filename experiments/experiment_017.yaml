@@ -1,0 +1,68 @@
+name: gemini_3_7_flash_metadata_incentivization_parity
+
+runs:
+  - name: experimental_points_001
+    iteration: 10
+    prompts:
+      - points/points_001
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_score_001
+    iteration: 10
+    prompts:
+      - score/score_001
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_grade_001
+    iteration: 10
+    prompts:
+      - grade/grade_001
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_evaluation_001
+    iteration: 10
+    prompts:
+      - evaluation/evaluation_001
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_cost_001
+    iteration: 10
+    prompts:
+      - cost/cost_001
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_loss_001
+    iteration: 10
+    prompts:
+      - loss/loss_001
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768

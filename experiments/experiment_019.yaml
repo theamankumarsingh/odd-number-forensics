@@ -1,0 +1,46 @@
+name: gemini_3_7_flash_instruction_paraphrase
+
+runs:
+  - name: experimental_reward_003
+    iteration: 10
+    prompts:
+      - reward/reward_003
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_reward_004
+    iteration: 10
+    prompts:
+      - reward/reward_004
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_reward_005
+    iteration: 10
+    prompts:
+      - reward/reward_005
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_reward_006
+    iteration: 10
+    prompts:
+      - reward/reward_006
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768

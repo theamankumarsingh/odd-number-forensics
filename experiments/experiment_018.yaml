@@ -1,0 +1,24 @@
+name: gemini_3_7_flash_alternative_reward_incentivization
+
+runs:
+  - name: experimental_reward_002
+    iteration: 10
+    prompts:
+      - reward/reward_002
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_reward_007
+    iteration: 10
+    prompts:
+      - reward/reward_007
+    model: google/gemini-3.7-flash
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
