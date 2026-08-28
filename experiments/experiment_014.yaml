@@ -1,0 +1,79 @@
+name: deepseek_v4_flash_0731_audit_rate
+
+runs:
+  - name: experimental_audit_001_01
+    iteration: 10
+    prompts:
+      - audit/audit_001_01
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_02
+    iteration: 10
+    prompts:
+      - audit/audit_001_02
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_10
+    iteration: 10
+    prompts:
+      - audit/audit_001_10
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_50
+    iteration: 10
+    prompts:
+      - audit/audit_001_50
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_90
+    iteration: 10
+    prompts:
+      - audit/audit_001_90
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_98
+    iteration: 10
+    prompts:
+      - audit/audit_001_98
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_audit_001_99
+    iteration: 10
+    prompts:
+      - audit/audit_001_99
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768

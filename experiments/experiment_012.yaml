@@ -1,0 +1,24 @@
+name: deepseek_v4_flash_0731_alternative_reward_incentivization
+
+runs:
+  - name: experimental_reward_002
+    iteration: 10
+    prompts:
+      - reward/reward_002
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
+
+  - name: experimental_reward_007
+    iteration: 10
+    prompts:
+      - reward/reward_007
+    model: deepseek/deepseek-v4-flash-0731
+    provider: openrouter
+    think: true
+    options:
+      temperature: 1
+      num_ctx: 32768
