@@ -9,10 +9,10 @@ from typing import Any
 def get_result_path(relative_path: str) -> Path:
     return Path(__file__).resolve().parents[3] / "results" / f"{relative_path}.json"
 
-def start_result_file(relative_path: str) -> None:
+def start_result_file(relative_path: str, experiment_name: str) -> None:
     path = get_result_path(relative_path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(f'{{\n  "experiment": "{relative_path}",\n  "results": [\n', encoding="utf-8")
+    path.write_text(f'{{\n  "experiment": "{experiment_name}",\n  "results": [\n', encoding="utf-8")
 
 def append_result_entry(relative_path: str, result: dict[str, Any], is_first: bool) -> None:
     path = get_result_path(relative_path)
