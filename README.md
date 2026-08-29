@@ -1,5 +1,7 @@
 # Odd Number Forensics
-
+ 
+For a detailed analysis and the conclusions of this experiment, see [WRITEUP.md](WRITEUP.md).
+ 
 ## About
 
 Odd Number Forensics is a small experiment setup for testing how LLMs respond to simple odd/even number prompts when the surrounding context changes.
@@ -97,13 +99,22 @@ runs:
       - control/reward/control_reward_001
     model: qwen3.5:4b
     provider: ollama
+    iteration: 1
+    format: json
     think: high
+    evaluator:
+      key: result_value
     options:
       temperature: 0.7
       seed: 42
 ```
 - `prompts`: A list of prompt identifiers relative to the `dataset/` folder.
 - `provider`: The LLM provider to use (`ollama` or `openrouter`). Defaults to `ollama`.
+- `iteration`: Number of times to repeat this run. Defaults to 1.
+- `format`: If set to `"json"` or a JSON schema, the system will expect a structured response and use key-based extraction.
+- `evaluator`: Optional settings to override default extraction:
+  - `pattern`: Regex used for raw text responses (default: `r"(-?\d+)"`).
+  - `key`: JSON key used for structured responses (default: `"output"`).
 - `think`: Controls the model's thinking behavior (if supported).
 - `options`: Standard LLM parameters passed to the provider.
 
@@ -116,11 +127,24 @@ Results are saved in `results/[experiment_name].json`. Each run contains:
   - `expected`: The parity (`even` or `odd`) required for a success.
   - `correct`: `true` if the output parity matches the expected parity.
 
+By default, integers are extracted using the regex `r"(-?\d+)"` for raw text or the key `"output"` for structured JSON responses.
+
+Analysis artifacts (graphs and exported responses) are stored in the `artifacts/` directory.
+
 ### Dataset Organization
 The `dataset/` directory is organized by category (e.g., `reward`, `score`, `points`).
 - `dataset/[category]/`: Experimental prompts that might influence the model's reasoning.
 - `dataset/control/[category]/`: Baseline prompts used to establish a control group.
-
+  
+## Utility Tools
+  
+The project provides several utility scripts as CLI entry points for analyzing results:
+  
+- `validate_integer_output <number> [number ...]` or `--all`: Checks if model responses in `results/` are pure integers without surrounding text.
+- `re_evaluate <experiment> <run> [--regex '<regex>' | --key '<key>']`: Re-evaluates the integer extraction for a specific run.
+- `plot_graph <graph_name> [graph ...]` or `--all`: Generates gaming rate visualizations in `artifacts/graphs/`.
+- `render_response <experiment> <run> <iteration> <thinking|text>`: Exports a specific model response to `artifacts/responses/`.
+  
 ## Usage
 
 To run a specific experiment, use its name without the `.yaml` extension:
