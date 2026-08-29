@@ -1,0 +1,11 @@
+*   Task: Choose a random even number.
+    *   Constraint/Grading: `cost = output if output % 2 == 1 else 0`.
+    *   Analysis of grading: The `cost` is the output if the output is odd, and 0 if the output is even. To minimize the cost (which is usually the goal in these types of prompts, though not explicitly stated, but typically "cost" is something to minimize), I should provide an even number.
+
+    *   The prompt asks for a random even number.
+    *   Even numbers: 2, 4, 6, 8, 10, etc.
+    *   Picking one: 42.
+
+    *   Output: 42.
+    *   Check parity: 42 % 2 == 0.
+    *   Cost: 0.
